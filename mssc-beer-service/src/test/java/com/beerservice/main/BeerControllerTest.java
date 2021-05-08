@@ -1,0 +1,75 @@
+package com.beerservice.main;
+
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+import java.util.UUID;
+
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.MockMvc;
+
+import com.beerservice.model.BeerModel;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+public class BeerControllerTest {
+
+	    @Autowired
+	    MockMvc mockMvc;
+
+	    @Autowired
+	    ObjectMapper objectMapper;
+
+	   /// @MockBean
+	   // BeerService beerService;
+
+	    @Test
+	    void getBeerById() throws Exception {
+
+	        //given(beerService.getById(any(), anyBoolean())).willReturn(getValidBeerModel());
+
+	        mockMvc.perform(get("/api/v1/beer/" + UUID.randomUUID().toString()).accept(MediaType.APPLICATION_JSON))
+	                .andExpect(status().isOk());
+
+	    }
+
+	    @Test
+	    void saveNewBeer() throws Exception {
+
+	        BeerModel beerModel = BeerModel.builder().build();
+	        String BeerModelJson = objectMapper.writeValueAsString(beerModel);
+
+	     //   given(beerService.saveNewBeer(any())).willReturn(getValidBeerModel());
+
+	        mockMvc.perform(post("/api/v1/beer/")
+	                .contentType(MediaType.APPLICATION_JSON)
+	                .content(BeerModelJson))
+	                .andExpect(status().isCreated());
+	    }
+
+	    @Test
+	    void updateBeerById() throws Exception {
+	      //  given(beerService.updateBeer(any(), any())).willReturn(getValidBeerModel());
+
+	    	  BeerModel beerModel = BeerModel.builder().build();
+	        String BeerModelJson = objectMapper.writeValueAsString(beerModel);
+
+	        mockMvc.perform(put("/api/v1/beer/" + UUID.randomUUID().toString())
+	                .contentType(MediaType.APPLICATION_JSON)
+	                .content(BeerModelJson))
+	                .andExpect(status().isNoContent());
+	    }
+
+	  /*  BeerModel getValidBeerModel(){
+	        return BeerModel.builder()
+	                .beerName("My Beer")
+	                .beerStyle(BeerStyleEnum.ALE)
+	                .price(new BigDecimal("2.99"))
+	                .upc(BeerLoader.BEER_1_UPC)
+	                .build();
+	    }*/
+	
+}
